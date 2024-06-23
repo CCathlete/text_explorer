@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from transformers import pipeline
-from LocalParser import Parser
+from LocalParser.Parser import Parser
 
 app = Flask(__name__)
 myParser = Parser()

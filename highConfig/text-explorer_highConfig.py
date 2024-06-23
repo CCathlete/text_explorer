@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import torch
-import model_loader as mldr
+import highConfig.model_loader_highConfig as mldr
 
 app = Flask(__name__)
 BookPath = "" # Initialising it here makes it global.

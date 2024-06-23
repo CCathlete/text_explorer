@@ -6,7 +6,7 @@ app = Flask(__name__)
 myParser = Parser()
 
 # Loading the models using pipeline.
-impiraQA = pipeline(task='question-answering', model='impira/layoutlm-document-qa')
+bioRobertaQA = pipeline(task='question-answering', model='allenai/biomed_roberta_base')
 # bertQa = pipeline(task='question-answering', model='distilbert-base-uncased-distilled-squad')
 # robertaQa = pipeline(task='question-answering', model='deepset/roberta-base-squad2')
 # t5Qa = pipeline(task='question-answering', model='valhalla/t5-small-qa-qg-hl')
@@ -18,8 +18,8 @@ def askQuestion():
     context = myParser.book
 
     # Getting answers from the modules.
-    print("\nAsking DistilBert your question.\n")
-    impiraAnswer = impiraQA(question=question, context=context)
+    print("\nAsking bio roberta your question.\n")
+    bioRobertaAnswer = bioRobertaQA(question=question, context=context)
     # bertAnswer = bertQa(question=question, context=context)
     # robertaAnswer = robertaQa(question=question, context=context)
     # t5Answer = t5Qa(question=question, context=context)
@@ -27,7 +27,7 @@ def askQuestion():
     # Combining the answers. TODO: choose the best one with some logic.
     print("\nWe have an answer:\n")
     combinedAnswers = {
-        'impira': impiraAnswer,
+        'bioRoberta': bioRobertaQA,
         # 'bert': bertAnswer,
         # 'roberta': robertaAnswer,
         # 't5': t5Answer

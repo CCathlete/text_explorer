@@ -6,9 +6,10 @@ app = Flask(__name__)
 myParser = Parser()
 
 # Loading the models using pipeline.
-bertQa = pipeline(task='question-answering', model='bert-large-uncased-whole-word-masking-finetuned-squad')
-robertaQa = pipeline(task='question-answering', model='deepset/roberta-base-squad2')
-t5Qa = pipeline(task='question-answering', model='valhalla/t5-small-qa-qg-hl')
+impiraQA = pipeline(task='question-answering', model='impira/layoutlm-document-qa')
+# bertQa = pipeline(task='question-answering', model='distilbert-base-uncased-distilled-squad')
+# robertaQa = pipeline(task='question-answering', model='deepset/roberta-base-squad2')
+# t5Qa = pipeline(task='question-answering', model='valhalla/t5-small-qa-qg-hl')
 
 @app.route('/ask', methods=['POST'])
 def askQuestion():
@@ -17,15 +18,19 @@ def askQuestion():
     context = myParser.book
 
     # Getting answers from the modules.
-    bertAnswer = bertQa(question=question, context=context)
-    robertaAnswer = robertaQa(question=question, context=context)
-    t5Answer = t5Qa(question=question, context=context)
+    print("\nAsking DistilBert your question.\n")
+    impiraAnswer = impiraQA(question=question, context=context)
+    # bertAnswer = bertQa(question=question, context=context)
+    # robertaAnswer = robertaQa(question=question, context=context)
+    # t5Answer = t5Qa(question=question, context=context)
 
     # Combining the answers. TODO: choose the best one with some logic.
+    print("\nWe have an answer:\n")
     combinedAnswers = {
-        'bert': bertAnswer,
-        'roberta': robertaAnswer,
-        't5': t5Answer
+        'impira': impiraAnswer,
+        # 'bert': bertAnswer,
+        # 'roberta': robertaAnswer,
+        # 't5': t5Answer
     }
 
     return jsonify(combinedAnswers)
@@ -37,4 +42,4 @@ def askQuestion():
 if __name__ == '__main__':
     BookPath = "Parasitology_book_2.txt"
     myParser.loadBook(BookPath)
-    app.run(debug=True)
+    app.run(debug=True, port=8080)

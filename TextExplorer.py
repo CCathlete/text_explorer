@@ -13,7 +13,8 @@ ngrokToken = os.getenv('NGROK_TOKEN')
 ngrok.set_auth_token(ngrokToken)
 
 # Loading the models using pipeline.
-bioRobertaQA = pipeline(task='question-answering', model='allenai/biomed_roberta_base')
+# bioRobertaQA = pipeline(task='question-answering', model='allenai/biomed_roberta_base')
+vetBertQA = pipeline(task='question-answering', model='havocy28/VetBERT')
 # bertQa = pipeline(task='question-answering', model='distilbert-base-uncased-distilled-squad')
 # robertaQa = pipeline(task='question-answering', model='deepset/roberta-base-squad2')
 # t5Qa = pipeline(task='question-answering', model='valhalla/t5-small-qa-qg-hl')
@@ -26,8 +27,10 @@ def askQuestion():
 
     # Getting answers from the modules.
     print("\nAsking bio roberta your question.\n")
-    bioRobertaAnswer = bioRobertaQA(question=question, context=context)
-    bioRobertaAnswerSerialisable = {k: makeSerialiseable(v) for k,v in bioRobertaAnswer.items()}
+    # bioRobertaAnswer = bioRobertaQA(question=question, context=context)
+    # bioRobertaAnswerSerialisable = {k: makeSerialiseable(v) for k,v in bioRobertaAnswer.items()}
+    vetBertAnswer = vetBertQA(question=question, context=context)
+    vetBertAnswerSerialisable = {k: makeSerialiseable(v) for k,v in vetBertAnswer.items()}
     # bertAnswer = bertQa(question=question, context=context)
     # robertaAnswer = robertaQa(question=question, context=context)
     # t5Answer = t5Qa(question=question, context=context)
@@ -35,7 +38,8 @@ def askQuestion():
     # Combining the answers. TODO: choose the best one with some logic.
     print("\nWe have an answer:\n")
     combinedAnswers = {
-        'bioRoberta': bioRobertaAnswerSerialisable,
+        'vetBert': vetBertAnswerSerialisable,
+        # 'bioRoberta': bioRobertaAnswerSerialisable,
         # 'bert': bertAnswer,
         # 'roberta': robertaAnswer,
         # 't5': t5Answer

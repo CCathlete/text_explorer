@@ -5,6 +5,7 @@ from pyngrok import ngrok
 # from google.colab import userdata # Relevant only on google colab.
 import numpy as np
 import os
+import requests
 
 app = Flask(__name__)
 myParser = Parser()
@@ -68,6 +69,17 @@ def makeSerialiseable(obj):
         return str(obj) # A fallback in case it's a custom object.
 
 
+def GetNgrokTunnels() -> list[str]:
+    url = "https://127.0.0.1:4040/api/tunnels"
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        tunnels = response.json()['tunnels']
+        print(f"\nOpen tunnels: {tunnels}\n")
+        return [tunnel['public_url'] for tunnel in tunnels]
+    else:
+        print(f"Failed to fetch tunnels. Status code: {response.status_code}")
+        return []
 
 
 
@@ -75,6 +87,10 @@ if __name__ == '__main__':
     BookPath = "text_explorer/Parasitology_book_2.txt"
     myParser.loadBook(BookPath)
     port = 5001
-    publicUrl = ngrok.connect(port)
+    openTunnels = GetNgrokTunnels()
+    if openTunnels == []:
+        publicUrl = ngrok.connect(port)
+    else:
+        publicUrl = openTunnels[0]
     print(f"\n * ngrok tunnel 'http://{publicUrl}' -> http://127.0.0.1:{port}\n")
     app.run(debug=True, port=port)

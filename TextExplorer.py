@@ -1,10 +1,16 @@
 from flask import Flask, request, jsonify
 from transformers import pipeline
 from LocalParser.Parser import Parser
+from pyngrok import ngrok
+# from google.colab import userdata # Relevant only on google colab.
 import numpy as np
+import os
 
 app = Flask(__name__)
 myParser = Parser()
+# ngrokToken = userdata.get('ngrok_token') # Relevant only on google colab.
+ngrokToken = os.getenv('NGROK_TOKEN')
+ngrok.set_auth_token(ngrokToken)
 
 # Loading the models using pipeline.
 bioRobertaQA = pipeline(task='question-answering', model='allenai/biomed_roberta_base')
@@ -56,12 +62,15 @@ def makeSerialiseable(obj):
         return obj # If it's already serialisable we just return it.
     else:
         return str(obj) # A fallback in case it's a custom object.
-    
 
-    
-    
-    
+
+
+
+
 if __name__ == '__main__':
-    BookPath = "Parasitology_book_2.txt"
+    BookPath = "text_explorer/Parasitology_book_2.txt"
     myParser.loadBook(BookPath)
-    app.run(debug=True, port=8080)
+    port = 5001
+    publicUrl = ngrok.connect(port)
+    print(f"\n * ngrok tunnel 'http://{publicUrl}' -> http://127.0.0.1:{port}\n")
+    app.run(debug=True, port=port)

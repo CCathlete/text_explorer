@@ -6,9 +6,12 @@ from pyngrok import ngrok
 import numpy as np
 import os
 import requests
+import time
+import subprocess
 
 app = Flask(__name__)
 myParser = Parser()
+
 # ngrokToken = userdata.get('ngrok_token') # Relevant only on google colab.
 ngrokToken = os.getenv('NGROK_TOKEN')
 ngrok.set_auth_token(ngrokToken)
@@ -70,12 +73,12 @@ def makeSerialiseable(obj):
 
 
 def GetNgrokTunnels() -> list[str]:
-    url = "https://127.0.0.1:4040/api/tunnels"
+    ngrokApiUrl = "http://localhost:4040/api/tunnels"
 
-    response = requests.get(url)
+    response = requests.get(ngrokApiUrl)
     if response.status_code == 200:
         tunnels = response.json()['tunnels']
-        print(f"\nOpen tunnels: {tunnels}\n")
+        # print(f"\nOpen tunnels: {tunnels}\n")
         return [tunnel['public_url'] for tunnel in tunnels]
     else:
         print(f"Failed to fetch tunnels. Status code: {response.status_code}")
@@ -84,7 +87,8 @@ def GetNgrokTunnels() -> list[str]:
 
 
 if __name__ == '__main__':
-    BookPath = "text_explorer/Parasitology_book_2.txt"
+    # BookPath = "text_explorer/Parasitology_book_2.txt"
+    BookPath = "Parasitology_book_2.txt"
     myParser.loadBook(BookPath)
     port = 5001
     openTunnels = GetNgrokTunnels()
@@ -92,5 +96,5 @@ if __name__ == '__main__':
         publicUrl = ngrok.connect(port)
     else:
         publicUrl = openTunnels[0]
-    print(f"\n * ngrok tunnel 'http://{publicUrl}' -> http://127.0.0.1:{port}\n")
-    app.run(debug=True, port=port)
+    print(f"\nPublic url: {publicUrl}\n")
+    # app.run(debug=True, port=port)

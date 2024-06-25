@@ -97,4 +97,4 @@ if __name__ == '__main__':
     else:
         publicUrl = openTunnels[0]
     print(f"\nPublic url: {publicUrl}\n")
-    # app.run(debug=True, port=port)
+    app.run(debug=True, port=port)
